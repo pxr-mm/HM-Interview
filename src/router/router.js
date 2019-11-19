@@ -2,10 +2,14 @@
 import VueRouter from 'vue-router';
 // 导入vue
 import Vue from 'vue';
+
+import login from '../views/login/login.vue'
 // use 
 Vue.use(VueRouter);
 // 规则
-const routes = [];
+const routes = [
+    {path:"/login", component:login},
+];
 
 // 创建路由示例
 const router = new VueRouter({

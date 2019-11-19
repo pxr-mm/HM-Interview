@@ -1,0 +1,9 @@
+html,body{
+    height: 100%;
+}
+/* 如果要严谨，可以写一堆标签 */
+*{
+    margin: 0;
+    padding: 0;
+    
+}
