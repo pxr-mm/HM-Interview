@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 // 导入vue
 import Vue from 'vue';
 
-import login from '../views/login/login.vue'
+import login from '../views/login/loginmm.vue'
 // use 
 Vue.use(VueRouter);
 // 规则
