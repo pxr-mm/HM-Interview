@@ -142,7 +142,10 @@
 </template>
 
 <script>
-import axios from "axios";
+// 导入路由
+// import axios from "axios";
+// 已经全部抽取为方法了，不再需要axios
+import { login, register,sendsms } from "../../api/api.js";
 
 export default {
   name: "login",
@@ -312,19 +315,28 @@ export default {
           // window.console.log()
           // window.console.log("加密:" + this.$md5(this.loginForm.password));
           this.loginForm.password = this.$md5(this.loginForm.password);
-          axios({
-            url: "http://183.237.67.218:3002/login",
-            method: "post",
-            data: {
-              phone: this.loginForm.phone,
-              password: this.$md5(this.loginForm.password),
-              code: this.loginForm.captcha
-            },
 
-            // ajax 跨域请求时，默认不会携带cookie，导致验证码无法验证
-            // 为了携带cookie,设置下面一句代码即可
-            withCredentials: true
-          }).then(res => {
+          // axios({
+          //   url: "http://183.237.67.218:3002/login",
+          //   method: "post",
+          //   data: {
+          //     phone: this.loginForm.phone,
+          //     password: this.$md5(this.loginForm.password),
+          //     code: this.loginForm.captcha
+          //   },
+
+          //   // ajax 跨域请求时，默认不会携带cookie，导致验证码无法验证
+          //   // 为了携带cookie,设置下面一句代码即可
+          //   withCredentials: true
+          // })
+          login(
+            {
+            phone: this.loginForm.phone,
+            password:  this.$md5(this.loginForm.password),
+            code: this.loginForm.captcha
+          }
+          )
+          .then(res => {
             //成功回调
             // window.console.log(res);
             if (res.data.code === 200) {
@@ -382,17 +394,25 @@ export default {
         this.$message.warning("老铁,你的手机是不是写错了呀！");
         return;
       }
-      // 说明 格式 内容都有
-      axios({
-        url: "http://183.237.67.218:3002/sendsms",
-        method: "post",
-        data: {
+      // // 说明 格式 内容都有
+      // axios({
+      //   url: "http://183.237.67.218:3002/sendsms",
+      //   method: "post",
+      //   data: {
+      //     code: this.registerForm.code,
+      //     phone: this.registerForm.phone
+      //   },
+      //   // 跨域携带cookie
+      //   withCredentials: true
+      // })
+      
+      sendsms( {
           code: this.registerForm.code,
           phone: this.registerForm.phone
-        },
-        // 跨域携带cookie
-        withCredentials: true
-      }).then(res => {
+        }).then(res => {
+        window.console.log(res);
+      })
+      .then(res => {
         window.console.log(res);
       });
 
@@ -420,19 +440,29 @@ export default {
         if (valid) {
           //前台加密
           this.registerForm.password = this.$md5(this.registerForm.password);
-          axios({
-            url: "http://183.237.67.218:3002/register",
-            method: "post",
-            data: {
-              avatar: this.registerForm.avatar,
-              email: this.registerForm.email,
-              name: this.registerForm.name,
-              //后台加密
-              password: this.$md5(this.registerForm.password),
-              phone: this.registerForm.phone,
-              rcode: this.registerForm.rcode
-            }
-          }).then(res => {
+          
+          // axios({
+          //   url: "http://183.237.67.218:3002/register",
+          //   method: "post",
+          //   data: {
+          //     avatar: this.registerForm.avatar,
+          //     email: this.registerForm.email,
+          //     name: this.registerForm.name,
+          //     //后台加密
+          //     password: this.$md5(this.registerForm.password),
+          //     phone: this.registerForm.phone,
+          //     rcode: this.registerForm.rcode
+          //   }
+          // })
+            register({
+            avatar: this.registerForm.avatar,
+            email: this.registerForm.email,
+            name: this.registerForm.name,
+            password: this.$md5(this.registerForm.password),
+            phone: this.registerForm.phone,
+            rcode: this.registerForm.rcode
+          })
+          .then(res => {
             //成功回调
             if (res.data.code === 200) {
               // 成功
