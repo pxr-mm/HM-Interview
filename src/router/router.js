@@ -2,6 +2,14 @@
 import VueRouter from 'vue-router';
 // 导入vue
 import Vue from 'vue';
+// use路由 
+Vue.use(VueRouter);
+// vue-router更新到3.1版本之后 解决两次访问相同路由地址报错
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 
 // 导入组件
 // 登录页面组件
@@ -9,8 +17,6 @@ import login from '../views/login/loginmm.vue'
 // 首页组件
 import index from '../views/index/index.vue'
 
-
-// use路由 
 
 
 // 2.1导入首页的嵌套组件
@@ -20,8 +26,7 @@ import user from '../views/index/user/user.vue';
 import Datashow from '../views/index/Datashow/Datashow.vue';
 import itemslist from '../views/index/itemslist/itemslist.vue';
 
-// use 
-Vue.use(VueRouter);
+
 
 // 创建路由规则
 const routes = [
