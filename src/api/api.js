@@ -1,5 +1,7 @@
 // 1. 导入axios
 import axios from 'axios';
+// 导入token 抽取层(因为要调用)
+import { getToken } from '../utils/token.js';
 // 2. 统一设置基地址
 axios.defaults.baseURL =  'http://183.237.67.218:3002';
 // 2.2 统一设置 跨域携带cookie
@@ -29,5 +31,15 @@ export function sendsms(data){
         url:"/sendsms",
         method:"post",
         data
+    })
+}
+//获取用户信息
+export function userInfo(){
+    return axios({
+        url:"/user/info",
+        method:"get",
+        headers:{
+            token: getToken()
+        }
     })
 }

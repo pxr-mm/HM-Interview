@@ -13,9 +13,10 @@
         <span class="title">黑马面面</span>
       </div>
       <div class="right">
-        <img class="avatar" src="../../assets/icon.gif" alt="" />
+        <img class="avatar" :src="avatar" alt="" />
         <span class="name">西兰花,您好</span>
-        <el-button class="logout" size="mini" type="primary">退出</el-button>
+        <el-button class="logout" size="mini" type="primary" @click="logout">退出</el-button>
+        <!-- <el-button type="text" @click="open"></el-button> -->
       </div>
     </el-header>
     
@@ -64,14 +65,71 @@
 </template>
 
 <script>
+import {getToken, removeToken} from "../../utils/token.js"
+import {userInfo} from "../../api/api.js"
 export default {
   name: "index",
   data() {
     return {
       // 是否折叠
-      isCollapse: false
+      isCollapse: false,
+      avatar:''
     };
-  }
+  },
+  methods:{
+    logout() {
+        this.$confirm('主人,你确定要离开吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+            removeToken();
+            this.$router.push("/login")
+          })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消退出'
+          });          
+        });
+      }
+    },
+ 
+
+  // 生命周期钩子
+  beforeCreate() {
+    // 判断token是否存在
+    const token = getToken();
+    if(!token) {
+      // 如果token不存在
+      // 提示用户
+      this.$message.error('亲,你木有登录哦,先去登录吧')
+      // 不存在就去跳去登录页
+      this.$router.push("/login");
+    }
+  },
+
+  // 创建钩子
+  created(){
+    userInfo().then( res=>{
+      // 判断token
+      if(res.data.code === 0) {
+        //token有问题  (伪造)
+        this.$message.error("老弟,你牛逼呀,伪造token")
+        // 删除token
+        removeToken();
+        // 去登录页面
+        this.$router.push('/login');
+        return
+        
+      }
+
+      window.console.log(res);
+      this.avatar =`http://183.237.67.218:3002/${res.data.data.avatar}`
+      this.name = res.data.data.name
+      // this.avatar = res.data.data.avatar
+    })
+  },
 };
 </script>
 

@@ -59,7 +59,7 @@
         </el-checkbox>
 
         <!-- 登录注册按钮 -->
-        <el-button type="primary" class="login-btn" @click="submitForm('loginForm')">登录</el-button>
+        <el-button type="primary" class="login-btn" @click="submitForm('loginForm')"  @keyup.enter="submitForm('loginForm')">登录</el-button>
         <el-button type="primary" class="reg-btn" @click="showReg = true">注册</el-button>
       </el-form>
     </div>
@@ -146,6 +146,9 @@
 // import axios from "axios";
 // 已经全部抽取为方法了，不再需要axios
 import { login, register,sendsms } from "../../api/api.js";
+// 导入抽取的token方法
+import {setToken } from "../../utils/token.js";
+
 
 export default {
   name: "login",
@@ -338,10 +341,16 @@ export default {
           )
           .then(res => {
             //成功回调
-            // window.console.log(res);
+            window.console.log(res);
             if (res.data.code === 200) {
               // 成功
               this.$message.success("主人你可算回来啦");
+              // 跳转
+              this.$router.push('/index');
+
+              // 保存token
+              // window.localStorage.setItem("mmtoken",res.data.data.token)
+              setToken(res.data.data.token);
             } else {
               // 失败
               this.$message.warning("账号或密码错误");
@@ -362,15 +371,16 @@ export default {
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      // const isLt2M = file.size / 1024 / 1024 < 2;
 
       if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
+        this.$message.success("上传头像图片只能是 JPG 格式!");
       }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
+      // if (!isLt2M) {
+      //   this.$message.error("上传头像图片大小不能超过 2MB!");
+      // }
+      // return isJPG && isLt2M;
+      return isJPG ;
     },
 
     // 注册图形验证码点击图片刷新(两种方法)
@@ -405,7 +415,8 @@ export default {
       //   // 跨域携带cookie
       //   withCredentials: true
       // })
-      
+
+      // api层方式发送axios
       sendsms( {
           code: this.registerForm.code,
           phone: this.registerForm.phone
@@ -458,6 +469,7 @@ export default {
             avatar: this.registerForm.avatar,
             email: this.registerForm.email,
             name: this.registerForm.name,
+            // 注意:前台加密,传参入后台和登录时要同步加密
             password: this.$md5(this.registerForm.password),
             phone: this.registerForm.phone,
             rcode: this.registerForm.rcode
@@ -479,6 +491,17 @@ export default {
           return false;
         }
       });
+    }
+  },
+
+  // 登录页面按下enter键触发登录方法 登录
+  created() {
+    let that = this;
+    document.onkeydown =function(e){
+      e = window.event || e;
+      if(that.$route.path=='/login'&&(e.code=='Enter'||e.code=='enter')){//验证在登录界面和按得键是回车键enter
+        that.submitForm('loginForm');//登录函数
+      }
     }
   }
 };
