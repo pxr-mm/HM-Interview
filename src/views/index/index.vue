@@ -1,37 +1,38 @@
 <template>
-<<<<<<< HEAD
-  <el-container class="index-box">
-    <el-header class="header">Header</el-header>
-    <el-container>
-      <el-aside width="200px" class="aside">Aside</el-aside>
-      <el-main class="main">Main</el-main>
-    </el-container>
-  </el-container>
-=======
-  <!-- <div class="index">  -->
-  <el-container class="index">
+  <el-container class="index-container">
+    <!-- 头部 -->
     <el-header class="header">
-      <!-- 头部左侧 -->
       <div class="left">
-        <i class="el-icon-s-fold" @click="isCollapse = !isCollapse" :class="{ rotate: isCollapse}"></i>
-        <img class="logo" src="../../assets/index.logo.png" alt />
+        <!-- 顶部的图标，点击旋转 -->
+        <i
+          class="el-icon-s-fold"
+          @click="isCollapse = !isCollapse"
+          :class="{ rotate: isCollapse }"
+        ></i>
+        <img class="logo" src="../../assets/index.logo.png" alt="" />
         <span class="title">黑马面面</span>
       </div>
-      <!-- 头部右侧 -->
       <div class="right">
-        <img src="../../assets/icon.gif" alt class="icon" />
-        <span class="userName">摆渡人,您好</span>
+        <img class="avatar" src="../../assets/icon.gif" alt="" />
+        <span class="name">西兰花,您好</span>
         <el-button class="logout" size="mini" type="primary">退出</el-button>
       </div>
     </el-header>
-
-  
-    <!-- 页面左侧导航栏 -->
+    
     <el-container>
-       <!-- style="width:auto" 让宽度自适应 被内容撑开 -->
+      <!-- 左侧
+         style="width:auto" 让宽度自适应 被内容撑开
+       -->
       <el-aside style="width:auto" class="aside">
-        <!-- 注意点:  加上router 才可以在页面上点击菜单到切换子页面  isCollapse是点击菜单图标是否折叠-->
-        <el-menu default-active="5" class="el-menu-vertical-demo" :collapse="isCollapse" router>
+        <!-- 注意点:  有router 才能点击菜单列表时切换到子页面 
+        isCollapse: 菜单是否重叠
+        -->
+        <el-menu
+          :collapse="isCollapse"
+          default-active="5"
+          class="el-menu-vertical-demo"
+          router 
+        >
           <el-menu-item index="Datashow">
             <i class="el-icon-pie-chart"></i>
             <span slot="title">数据概览</span>
@@ -54,97 +55,74 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-
-      <!-- 页面主体部分 -->
+      <!-- 主体区域 -->
       <el-main class="main">
-        <!-- 嵌套组件的路由出口 -->
         <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
-  <!-- </div> -->
->>>>>>> index
 </template>
 
 <script>
 export default {
-<<<<<<< HEAD
-  name: "index"
-};
-</script>
-
-<style lang="less">
-.index-box {
-    background-color: #ffe;
-    height: 100%;
-
-    .header {
-        background-color: #fff;
-    }
-    .main {
-        background-color: #E8E9EC;
-    }
-=======
   name: "index",
   data() {
     return {
-      // 菜单是否折叠 
+      // 是否折叠
       isCollapse: false
     };
   }
 };
 </script>
 
-<style lang=less>
-.index {
+<style lang="less">
+.index-container {
   height: 100%;
   .header {
-    height: 60px;
+    // background-color: orange;
     display: flex;
     justify-content: space-between;
     .left {
       display: flex;
       align-items: center;
-     .el-icon-s-fold {
+      .el-icon-s-fold {
         font-size: 23px;
         margin-right: 22px;
       }
-      img.logo {
+      .logo {
         width: 33px;
         height: 28px;
         margin-right: 11px;
       }
-      span.title {
+      .title {
         font-size: 22px;
         color: #49a1ff;
       }
     }
-
     .right {
       display: flex;
       align-items: center;
-      .icon {
+      .avatar {
         width: 43px;
         height: 43px;
         border-radius: 50%;
         margin-right: 9px;
       }
-      .userName {
+      .name {
         font-size: 14px;
         margin-right: 38px;
       }
     }
   }
-  /* 左侧导航栏 */
   .aside {
-    
+    // background: skyblue;
   }
   .main {
     background-color: #e8e9ec;
   }
 
-  /* 折叠菜单相关类名 */
- .el-menu-vertical-demo:not(.el-menu--collapse) {
+  // 折叠菜单相关的类名
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 200px;
     min-height: 400px;
   }
@@ -155,6 +133,5 @@ export default {
   .rotate {
     transform: rotate(-90deg);
   }
->>>>>>> index
 }
 </style>
