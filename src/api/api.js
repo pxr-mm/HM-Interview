@@ -36,8 +36,13 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     function (response) {
         // 判断token
-        if (response.data.data.code === 0) {
-            Message.error("小老弟,伪造token,牛逼")
+        // if (response.data.data.code === 0) {   //该逻辑不严谨,很多的报错code都是0
+        // 多加判断条件
+        if (response.data.data.code === 0 && response.data.message.indexOf('token')) { 
+            // 提示
+            // Message.error("小老弟,伪造token,牛逼");
+            // 直接使用服务器返回的信息提示用户
+            Message.error(response.data.message);
             // 删除token
             removeToken();
             // 去登录页面
@@ -89,4 +94,52 @@ export function userInfo() {
             token: getToken()
         }
     })
+}
+
+
+
+// 作用域 抽取学科接口
+// subject.add subject.remove
+export const subject ={
+  // 新增
+  add(data){
+    return axios({
+      url:"/subject/add",
+      method:"post",
+      data
+    })
+  },
+  // 列表
+  // get请求的参数用params来传递
+  list(params){
+    return axios({
+      url:"/subject/list",
+      method:"get",
+      params
+    })
+  },
+  // 状态
+  status(data){
+    return axios({
+      url:"/subject/status",
+      method:"post",
+      data
+    })
+  },
+  // 编辑
+  edit(data){
+    return axios({
+      url:"/subject/edit",
+      method:"post",
+      data
+    })
+  },
+  // 删除
+  remove(data){
+    return axios({
+      url:"/subject/remove",
+      method:"post",
+      data
+    })
+  },
 }
