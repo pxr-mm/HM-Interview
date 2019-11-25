@@ -23,7 +23,7 @@
         <el-form-item>
           <el-button type="primary" @click="search">搜索</el-button>
           <el-button>清除</el-button>
-          <el-button type="primary" icon="el-icon-plus">新增企业</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="addFormVisible = true">新增学科</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -47,10 +47,13 @@
         </el-table-column>
         <el-table-column label="操作">
           <!-- 插槽 -->
-          <template>
+          <template slot-scope="scope">
             <el-button type="text">编辑</el-button>
-            <el-button type="text">禁用</el-button>
-            <el-button type="text">删除</el-button>
+            <el-button type="text" @click="status(scope.row)">
+              <!-- 禁用启用按钮 -->
+              {{ scope.row.status === 1?'禁用':'启用'}}
+            </el-button>
+            <el-button type="text" @click="remove(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -66,7 +69,31 @@
         @current-change="handleCurrentChange"
       ></el-pagination>
     </el-card>
-    <el-card></el-card>
+
+    <!-- 新增对话框 -->
+    <el-dialog title="新增学科" :visible.sync="addFormVisible">
+      <el-form :model="addForm" ref="addForm" :rules="Rules">
+        <el-form-item label="学科编号" prop="rid" :label-width="formLabelWidth">
+          <el-input v-model="addForm.rid" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科名称" prop="name" :label-width="formLabelWidth">
+          <el-input v-model="addForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科简称" :label-width="formLabelWidth">
+          <el-input v-model="addForm.short_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科简介" :label-width="formLabelWidth">
+          <el-input type="textarea" v-model="addForm.intro" autocomplete="off" :rows="2"></el-input>
+        </el-form-item>
+        <el-form-item label="学科备注" :label-width="formLabelWidth">
+          <el-input v-model="addForm.remark" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitAdd">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -87,7 +114,18 @@ export default {
       // 页码数组
       pageSizes: [5, 10, 15, 20],
       // 总条数
-      total: 0
+      total: 0,
+      // 新增学科
+      addFormVisible: false,
+      // 新增表单
+      addForm: {},
+      // label的宽度不设置不能都在一行
+      formLabelWidth: "100px",
+      // 新增学科表单验证规则
+      Rules: {
+        rid: [ { required: true, message: "学科编号不能为空哦", trigger: "blur" }],
+        name: [{ required: true, message: "学科名不能为空", trigger: "blur" }]
+      }
     };
   },
 
@@ -146,6 +184,78 @@ export default {
       this.page = current;
       // 重新获取数据
       this.search();
+    },
+    // 提交新增学科表单
+    submitAdd() {
+      // 表单验证
+      this.$refs.addForm.validate(valid => {
+        if (valid) {
+          // 验证成功
+          // 调用接口
+          subject.add(this.addForm).then(res => {
+            window.console.log(res);
+            // 如果成功  提示用户 关闭 对话框
+            if(res.data.code == 200) {
+              this.addFormVisible = false;
+              this.$message.success(res.data.message);
+              // 重新获取一次;
+              this.getList();
+            }
+           
+          });
+        } else {
+           // 如果失败  提示用户数据必选项要填完整
+           this.$message.warning('老铁,必选项要填哦');
+           return false;
+        }
+      });
+    },
+    // 删除数据方法
+    remove(data){
+      window.console.log(data);
+      // 提示用户
+      this.$confirm("此操作将永久删除学科,确定?","提示", {
+        consfirmButtonText: "确定",
+        cancelButtonText:"取消",
+        type: "warning"
+      })
+      // 用户点击确定
+      .then(()=>{
+        // 调用接口
+        subject.remove({
+          id: data.id
+        }).then( res=> {
+          // 如果删除成功, 弹出框提示成功
+          if( res.data.code === 200) {
+            this.$message.success(res.data.message);
+            // 重新获取数据列表
+            this.getList();
+          }
+        })
+      })
+      // 用户点击取消
+      .catch(()=>{
+       this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+      })
+    },
+
+    // 启用禁用数据的方法
+    status(data) {
+      subject.status({
+        id: data.id,
+        // 三元表达式
+        status: data.status === 1?0:1
+      }).then(res => {
+        // window.console.log(res);
+        if(res.data.code === 200){
+          // 重新获取列表是数据
+          this.getList();
+          this.$message.success(res.data.message)
+        }
+      })
     }
   }
 };
@@ -170,6 +280,9 @@ export default {
   // card的样式
   .main-card {
     margin-top: 20px;
+  }
+  .red {
+    color: red;
   }
 }
 </style>
