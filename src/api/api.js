@@ -38,7 +38,7 @@ axios.interceptors.response.use(
         // 判断token
         // if (response.data.data.code === 0) {   //该逻辑不严谨,很多的报错code都是0
         // 多加判断条件
-        if (response.data.data.code === 0 && response.data.message.indexOf('token')) { 
+        if (response.data.data.code === 0 && response.data.message.indexOf('token')) {
             // 提示
             // Message.error("小老弟,伪造token,牛逼");
             // 直接使用服务器返回的信息提示用户
@@ -49,6 +49,11 @@ axios.interceptors.response.use(
             router.push("/login");
             return;
         }
+        // // 根据需求可以修改 如果状态码为200 成功(自动提示)
+        // if (response.data.code === 200) {
+        //     Message.success(response.data.message);
+        // }
+
         return response;
     },
     function (error) {
@@ -100,48 +105,48 @@ export function userInfo() {
 
 // 作用域 抽取学科接口
 // subject.add subject.remove
-export const subject ={
-  // 新增
-  add(data){
-    return axios({
-      url:"/subject/add",
-      method:"post",
-      data
-    })
-  },
-  // 列表
-  // get请求的参数用params来传递
-  list(params){
-    return axios({
-      url:"/subject/list",
-      method:"get",
-      params
-    })
-  },
-  // 状态
-  status(data){
-    return axios({
-      url:"/subject/status",
-      method:"post",
-      data
-    })
-  },
-  // 编辑
-  edit(data){
-    return axios({
-      url:"/subject/edit",
-      method:"post",
-      data
-    })
-  },
-  // 删除
-  remove(data){
-    return axios({
-      url:"/subject/remove",
-      method:"post",
-      data
-    })
-  },
+export const subject = {
+    // 新增
+    add(data) {
+        return axios({
+            url: "/subject/add",
+            method: "post",
+            data
+        })
+    },
+    // 列表
+    // get请求的参数用params来传递
+    list(params) {
+        return axios({
+            url: "/subject/list",
+            method: "get",
+            params
+        })
+    },
+    // 状态
+    status(data) {
+        return axios({
+            url: "/subject/status",
+            method: "post",
+            data
+        })
+    },
+    // 编辑
+    edit(data) {
+        return axios({
+            url: "/subject/edit",
+            method: "post",
+            data
+        })
+    },
+    // 删除
+    remove(data) {
+        return axios({
+            url: "/subject/remove",
+            method: "post",
+            data
+        })
+    },
 }
 
 

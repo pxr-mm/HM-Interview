@@ -27,6 +27,7 @@
         </el-form-item>
       </el-form>
     </el-card>
+
     <!-- 内容 -->
     <el-card class="main-card">
       <!-- 表格 -->
@@ -48,7 +49,7 @@
         <el-table-column label="操作">
           <!-- 插槽 -->
           <template slot-scope="scope">
-            <el-button type="text">编辑</el-button>
+            <el-button type="text" @click="showEdit(scope.row)">编辑</el-button>
             <el-button type="text" @click="status(scope.row)">
               <!-- 禁用启用按钮 -->
               {{ scope.row.status === 1?'禁用':'启用'}}
@@ -94,11 +95,38 @@
         <el-button type="primary" @click="submitAdd">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 编辑对话框 -->
+    <el-dialog title="编辑学科" :visible.sync="editFormVisible">
+      <el-form :model="editForm" ref="editForm" :rules="Rules">
+        <el-form-item label="学科编号" prop="rid" :label-width="formLabelWidth">
+          <el-input v-model="editForm.rid" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科名称" prop="name" :label-width="formLabelWidth">
+          <el-input v-model="editForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科简称" :label-width="formLabelWidth">
+          <el-input v-model="editForm.short_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科简介" :label-width="formLabelWidth">
+          <!-- 文本域 -->
+          <el-input type="textarea" v-model="editForm.intro" autocomplete="off" :rows="2"></el-input>
+        </el-form-item>
+        <el-form-item label="学科备注" :label-width="formLabelWidth">
+          <el-input v-model="editForm.remark" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitEdit">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 
 <script>
+// 导入接口api抽取层
 import { subject } from "../../../api/api.js";
 export default {
   name: "enterprise",
@@ -123,9 +151,16 @@ export default {
       formLabelWidth: "100px",
       // 新增学科表单验证规则
       Rules: {
-        rid: [ { required: true, message: "学科编号不能为空哦", trigger: "blur" }],
+        rid: [
+          { required: true, message: "学科编号不能为空哦", trigger: "blur" }
+        ],
         name: [{ required: true, message: "学科名不能为空", trigger: "blur" }]
-      }
+      },
+
+      // 编辑表单的数据
+      editForm: {},
+      // 编辑表单是否显示
+      editFormVisible: false
     };
   },
 
@@ -195,67 +230,104 @@ export default {
           subject.add(this.addForm).then(res => {
             window.console.log(res);
             // 如果成功  提示用户 关闭 对话框
-            if(res.data.code == 200) {
+            if (res.data.code == 200) {
               this.addFormVisible = false;
               this.$message.success(res.data.message);
               // 重新获取一次;
               this.getList();
             }
-           
           });
         } else {
-           // 如果失败  提示用户数据必选项要填完整
-           this.$message.warning('老铁,必选项要填哦');
-           return false;
+          // 如果失败  提示用户数据必选项要填完整
+          this.$message.warning("老铁,必选项要填哦");
+          return false;
         }
       });
     },
     // 删除数据方法
-    remove(data){
+    remove(data) {
       window.console.log(data);
       // 提示用户
-      this.$confirm("此操作将永久删除学科,确定?","提示", {
+      this.$confirm("此操作将永久删除学科,确定?", "提示", {
         consfirmButtonText: "确定",
-        cancelButtonText:"取消",
+        cancelButtonText: "取消",
         type: "warning"
       })
-      // 用户点击确定
-      .then(()=>{
-        // 调用接口
-        subject.remove({
-          id: data.id
-        }).then( res=> {
-          // 如果删除成功, 弹出框提示成功
-          if( res.data.code === 200) {
-            this.$message.success(res.data.message);
-            // 重新获取数据列表
-            this.getList();
-          }
+        // 用户点击确定
+        .then(() => {
+          // 调用接口
+          subject
+            .remove({
+              id: data.id
+            })
+            .then(res => {
+              // 如果删除成功, 弹出框提示成功
+              if (res.data.code === 200) {
+                this.$message.success(res.data.message);
+                // 重新获取数据列表
+                this.getList();
+              }
+            });
         })
-      })
-      // 用户点击取消
-      .catch(()=>{
-       this.$message({
+        // 用户点击取消
+        .catch(() => {
+          this.$message({
             type: "info",
             message: "已取消删除"
           });
-      })
+        });
     },
 
     // 启用禁用数据的方法
     status(data) {
-      subject.status({
-        id: data.id,
-        // 三元表达式
-        status: data.status === 1?0:1
-      }).then(res => {
-        // window.console.log(res);
-        if(res.data.code === 200){
-          // 重新获取列表是数据
-          this.getList();
-          this.$message.success(res.data.message)
+      subject
+        .status({
+          id: data.id,
+          // 三元表达式
+          status: data.status === 1 ? 0 : 1
+        })
+        .then(res => {
+          // window.console.log(res);
+          if (res.data.code === 200) {
+            // 重新获取列表是数据
+            this.getList();
+            this.$message.success(res.data.message);
+          }
+        });
+    },
+
+    // 编辑数据
+    showEdit(data) {
+      //弹出编辑对话框
+      this.editFormVisible = true;
+      // 修改数据 浅拷贝
+      // this.editForm = data;
+      // 为了不联动 改为 深拷贝
+      this.editForm = JSON.parse(JSON.stringify(data));
+    },
+    submitEdit() {
+      // 点击确定按钮先进行表单验证
+      window.console.log("哈哈哈啥啥哈哈")
+      this.$refs.editForm.validate(valid => {
+        // 表单验证
+        if (valid) {
+          // 验证成功
+          // 调用接口发送axios
+          subject.edit(this.editForm).then(res => {
+            // 如果成功 提示用户 关闭对话框
+            if(res.data.code === 200){
+              this.$message.success("修改成功");
+              this.editFormVisible = false;
+              // 重新获取数据
+              this.getList();
+            }
+          });
+        } else {
+          // 失败 
+          this.$message.warning('老铁,数据没修改对哦');
+          return false;
         }
-      })
+      });
     }
   }
 };
