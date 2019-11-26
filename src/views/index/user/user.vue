@@ -4,19 +4,16 @@
     <el-card>
       <!-- 行内 表单 -->
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="企业编号">
+        <el-form-item label="用户名称">
           <el-input v-model="formInline.user"></el-input>
         </el-form-item>
-        <el-form-item label="企业名称" class="more-width">
+        <el-form-item label="用户邮箱" class="more-width">
           <el-input v-model="formInline.user"></el-input>
         </el-form-item>
-        <el-form-item label="创建者">
-          <el-input v-model="formInline.user"></el-input>
-        </el-form-item>
-        <el-form-item label="状态" class="more-width">
+        <el-form-item label="角色" class="more-width">
           <el-select v-model="formInline.region" placeholder="请选择状态">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+            <el-option label="学生" value="学生"></el-option>
+            <el-option label="教师" value="教师"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -31,27 +28,29 @@
       <!-- 表格 -->
       <el-table :data="tableData" style="width: 100%" stripe border>
         <el-table-column type="index" label="序号"> </el-table-column>
-        <el-table-column prop="date" label="企业标号"> </el-table-column>
-        <el-table-column prop="name" label="企业名称"> </el-table-column>
-        <el-table-column prop="address" label="简称"> </el-table-column>
-        <el-table-column prop="skill" label="创建者"> </el-table-column>
-        <el-table-column prop="skill" label="创建日期"> </el-table-column>
-        <el-table-column label="状态"> </el-table-column>
+        <el-table-column prop="name" label="用户名"> </el-table-column>
+        <el-table-column prop="phone" label="电话"> </el-table-column>
+        <el-table-column prop="email" label="邮箱"> </el-table-column>
+        <el-table-column prop="role" label="角色"> </el-table-column>
+        <el-table-column prop="remark" label="备注"> </el-table-column>
+        <el-table-column label="状态" prop="status"> </el-table-column>
         <el-table-column label="操作">
-          <!-- 插槽 -->
+          <!-- 插槽 要想插入自己想要的东西,就使用插槽template-->
           <template>
-            <el-button type="primary">编辑</el-button>
+            <el-button type="text">编辑</el-button>
+            <el-button type="text">禁用</el-button>
+            <el-button type="text">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页器 -->
       <el-pagination
         background
-        :current-page="1"
-        :page-sizes="[5, 10, 15, 20]"
-        :page-size="100"
+        :current-page="page"
+        :page-sizes="pageSizes"
+        :page-size="limit"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="36"
+        :total="total"
       >
       </el-pagination>
     </el-card>
@@ -61,13 +60,39 @@
 </template>
 
 <script>
+// 导入api抽取层 接口调用
+import { user } from '../../../api/api';
 export default {
-  name: "enterprise",
+  name: "name",
   data() {
     return {
+      // 筛选的表格 
       formInline: {},
-      tableData: []
+      // 列表数据  相当于v-for,自动帮你渲染页面
+      tableData: [],
+
+      // 当前页 
+      page: 1,
+      // 页码数组
+      pageSizes:[5, 10, 15, 20],
+      // 页容量
+      limit: 10,
+      // 总页数 
+      total: 0
     };
+  },
+  methods: {
+    
+  },
+  // 页面一打开 生命周期钩子获取用户列表数据
+  created(){
+    // 调用接口 用户列表
+   
+    user.list().then(res => {
+       window.console.log(res)
+      this.tableData = res.data.data.items;
+    });
+    
   }
 };
 </script>

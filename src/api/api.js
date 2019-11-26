@@ -95,9 +95,10 @@ export function userInfo() {
     return axios({
         url: "/user/info",
         method: "get",
-        headers: {
-            token: getToken()
-        }
+        // 通过拦截器设置了
+        // headers: {
+        //     token: getToken()
+        // }
     })
 }
 
@@ -154,44 +155,89 @@ export const subject = {
 export const enterprise = {
     // 新增
     add(data) {
-      return axios({
-        url: "/enterprise/add",
-        method: "post",
-        data
-      });
+        return axios({
+            url: "/enterprise/add",
+            method: "post",
+            data
+        });
     },
     // 列表
     // get请求的参数用params来传递
     list(params) {
-      return axios({
-        url: "/enterprise/list",
-        method: "get",
-        params
-      });
+        return axios({
+            url: "/enterprise/list",
+            method: "get",
+            params
+        });
     },
     // 状态
     status(data) {
-      return axios({
-        url: "/enterprise/status",
-        method: "post",
-        data
-      });
+        return axios({
+            url: "/enterprise/status",
+            method: "post",
+            data
+        });
     },
     // 编辑
     edit(data) {
-      return axios({
-        url: "/enterprise/edit",
-        method: "post",
-        data
-      });
+        return axios({
+            url: "/enterprise/edit",
+            method: "post",
+            data
+        });
     },
     // 删除
     remove(data) {
-      return axios({
-        url: "/enterprise/remove",
-        method: "post",
-        data
-      });
+        return axios({
+            url: "/enterprise/remove",
+            method: "post",
+            data
+        });
     }
-  };
-  
+};
+
+// 作用域 抽取用户接口
+export const user = {
+    // 新增
+    add(data) {
+        return axios({
+            url: "/user/add",
+            method: "post",
+            data
+        })
+    },
+    // 状态
+    status(data) {
+        return axios({
+            url: "/user/status",
+            method: "post",
+            data
+        })
+    },
+    // 列表
+    // get请求的参数用params来传递
+    list(params) {
+        return axios({
+            url: "/user/list",
+            method: "get",
+            params
+        });
+    },
+    // 编辑
+    edit(data) {
+        return axios({
+            url: "/user/edit",
+            method: "post",
+            data
+        });
+    },
+    // 删除
+    remove(data) {
+        return axios({
+            url: "/user/remove",
+            method: "post",
+            data
+        });
+    }
+}
+
