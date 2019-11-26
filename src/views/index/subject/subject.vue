@@ -307,7 +307,6 @@ export default {
     },
     submitEdit() {
       // 点击确定按钮先进行表单验证
-      window.console.log("哈哈哈啥啥哈哈")
       this.$refs.editForm.validate(valid => {
         // 表单验证
         if (valid) {

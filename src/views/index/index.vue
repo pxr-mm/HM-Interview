@@ -127,7 +127,7 @@ export default {
         
       }
 
-      window.console.log(res);
+      // window.console.log(res);
       this.avatar =`${process.env.VUE_APP_BASEURL}/${res.data.data.avatar}`
       this.name = res.data.data.name
       // this.avatar = res.data.data.avatar
