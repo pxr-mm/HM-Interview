@@ -14,7 +14,7 @@
       </div>
       <div class="right">
         <img class="avatar" :src="avatar" alt="" />
-        <span class="name">西兰花,您好</span>
+        <span class="name">{{name}}, 您好</span>
         <el-button class="logout" size="mini" type="primary" @click="logout">退出</el-button>
         <!-- <el-button type="text" @click="open"></el-button> -->
       </div>
@@ -73,7 +73,10 @@ export default {
     return {
       // 是否折叠
       isCollapse: false,
-      avatar:''
+      // 头像 
+      avatar:'',
+      // 用户名
+      name:"",
     };
   },
   methods:{
@@ -125,7 +128,7 @@ export default {
       }
 
       window.console.log(res);
-      this.avatar =`http://183.237.67.218:3002/${res.data.data.avatar}`
+      this.avatar =`${process.env.VUE_APP_BASEURL}/${res.data.data.avatar}`
       this.name = res.data.data.name
       // this.avatar = res.data.data.avatar
     })

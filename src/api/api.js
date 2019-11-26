@@ -8,7 +8,7 @@ import { Message } from 'element-ui';
 import router from '../router/router.js';
 
 // 2. 统一设置基地址
-axios.defaults.baseURL = 'http://183.237.67.218:3002';
+axios.defaults.baseURL = process.env.VUE_APP_BASEURL;
 // 2.2 统一设置 跨域携带cookie
 axios.defaults.withCredentials = true;
 
@@ -149,4 +149,49 @@ export const subject = {
     },
 }
 
-
+// 作用域 抽取企业接口
+// subject.add subject.remove
+export const enterprise = {
+    // 新增
+    add(data) {
+      return axios({
+        url: "/enterprise/add",
+        method: "post",
+        data
+      });
+    },
+    // 列表
+    // get请求的参数用params来传递
+    list(params) {
+      return axios({
+        url: "/enterprise/list",
+        method: "get",
+        params
+      });
+    },
+    // 状态
+    status(data) {
+      return axios({
+        url: "/enterprise/status",
+        method: "post",
+        data
+      });
+    },
+    // 编辑
+    edit(data) {
+      return axios({
+        url: "/enterprise/edit",
+        method: "post",
+        data
+      });
+    },
+    // 删除
+    remove(data) {
+      return axios({
+        url: "/enterprise/remove",
+        method: "post",
+        data
+      });
+    }
+  };
+  

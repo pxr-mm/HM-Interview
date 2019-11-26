@@ -59,7 +59,12 @@
         </el-checkbox>
 
         <!-- 登录注册按钮 -->
-        <el-button type="primary" class="login-btn" @click="submitForm('loginForm')"  @keyup.enter="submitForm('loginForm')">登录</el-button>
+        <el-button
+          type="primary"
+          class="login-btn"
+          @click="submitForm('loginForm')"
+          @keyup.enter="submitForm('loginForm')"
+        >登录</el-button>
         <el-button type="primary" class="reg-btn" @click="showReg = true">注册</el-button>
       </el-form>
     </div>
@@ -75,7 +80,7 @@
         <el-form-item label="头像" :label-width="formLabelWidth">
           <el-upload
             class="avatar-uploader"
-            action="http://183.237.67.218:3002/uploads"
+            :action="action"
             name="image"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
@@ -145,10 +150,9 @@
 // 导入路由
 // import axios from "axios";
 // 已经全部抽取为方法了，不再需要axios
-import { login, register,sendsms } from "../../api/api.js";
+import { login, register, sendsms } from "../../api/api.js";
 // 导入抽取的token方法
-import {setToken } from "../../utils/token.js";
-
+import { setToken } from "../../utils/token.js";
 
 export default {
   name: "login",
@@ -205,7 +209,7 @@ export default {
       },
 
       // 验证码地址
-      captchaSrc: "http://183.237.67.218:3002/captcha?type=login",
+      captchaSrc: `${process.env.VUE_APP_BASEURL}/captcha?type=login`,
 
       // 注册表单部分
       // 是否显示注册框
@@ -279,12 +283,14 @@ export default {
       imageUrl: "",
 
       // 注册图形验证码 地址
-      regCaptcha: "http://183.237.67.218:3002/captcha?type=sendsms",
+      regCaptcha: `${process.env.VUE_APP_BASEURL}/captcha?type=sendsms`,
 
       // 获取手机验短信证码部分
       btnTxt: "获取用户验证码",
       // 1.按钮是否可以点击(设置按钮禁用启用)
-      isDisabled: false
+      isDisabled: false,
+      // 文件上传地址
+      action: process.env.VUE_APP_BASEURL + "/uploads"
     };
   },
 
@@ -294,14 +300,19 @@ export default {
     changeCaptcha() {
       // 方法1.修改值即可,在地址后面添加随机生成的参数
       // 很有可能重复
-      this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Math.random()}`;
+      this.captchaSrc = `${
+        process.env.VUE_APP_BASEURL
+      }/captcha?type=login&${Math.random()}`;
       // 2. 时间戳  绝对不会重复
-      this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Date.now()}}`;
-      // this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login`
+      this.captchaSrc = `${
+        process.env.VUE_APP_BASEURL
+      }/captcha?type=login&${Date.now()}}`;
+      // this.captchaSrc = `${process.env.VUE_APP_BASEURL}/captcha?type=login`
     },
 
     // 点击登录
     submitForm(formName) {
+      window.console.log(process.env.VUE_APP_BASEURL);
       // 布尔判断 如果为false
       // 选中协议提示
       if (!this.checked) {
@@ -320,7 +331,7 @@ export default {
           this.loginForm.password = this.$md5(this.loginForm.password);
 
           // axios({
-          //   url: "http://183.237.67.218:3002/login",
+          //   url: `${process.env.VUE_APP_BASEURL}/login`,
           //   method: "post",
           //   data: {
           //     phone: this.loginForm.phone,
@@ -332,21 +343,18 @@ export default {
           //   // 为了携带cookie,设置下面一句代码即可
           //   withCredentials: true
           // })
-          login(
-            {
+          login({
             phone: this.loginForm.phone,
-            password:  this.$md5(this.loginForm.password),
+            password: this.$md5(this.loginForm.password),
             code: this.loginForm.captcha
-          }
-          )
-          .then(res => {
+          }).then(res => {
             //成功回调
             window.console.log(res);
             if (res.data.code === 200) {
               // 成功
               this.$message.success("主人你可算回来啦");
               // 跳转
-              this.$router.push('/index');
+              this.$router.push("/index");
 
               // 保存token
               // window.localStorage.setItem("mmtoken",res.data.data.token)
@@ -371,24 +379,26 @@ export default {
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";
-      // const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 2;
 
-      if (!isJPG) {
-        this.$message.success("上传头像图片只能是 JPG 格式!");
-      }
-      // if (!isLt2M) {
-      //   this.$message.error("上传头像图片大小不能超过 2MB!");
+      // if (!isJPG) {
+      //   this.$message.success("上传头像图片只允许传 非JPG 格式!");
       // }
-      // return isJPG && isLt2M;
-      return isJPG ;
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+      // return isJPG;
     },
 
     // 注册图形验证码点击图片刷新(两种方法)
     changeRegCaptcha() {
       //1.  随机生成一个数
-      // this.regCaptcha = `http://183.237.67.218:3002/captcha?type=sendsms&${Math.random()}`;
+      // this.regCaptcha = `${process.env.VUE_APP_BASEURL}/captcha?type=sendsms&${Math.random()}`;
       // 2. 时间戳
-      this.regCaptcha = `http://183.237.67.218:3002/captcha?type=sendsms&${Date.now()}`;
+      this.regCaptcha = `${
+        process.env.VUE_APP_BASEURL
+      }/captcha?type=sendsms&${Date.now()}`;
     },
 
     // 获取手机短信验证码
@@ -406,7 +416,7 @@ export default {
       }
       // // 说明 格式 内容都有
       // axios({
-      //   url: "http://183.237.67.218:3002/sendsms",
+      //   url: `${process.env.VUE_APP_BASEURL}/sendsms,
       //   method: "post",
       //   data: {
       //     code: this.registerForm.code,
@@ -417,15 +427,16 @@ export default {
       // })
 
       // api层方式发送axios
-      sendsms( {
-          code: this.registerForm.code,
-          phone: this.registerForm.phone
-        }).then(res => {
-        window.console.log(res);
+      sendsms({
+        code: this.registerForm.code,
+        phone: this.registerForm.phone
       })
-      .then(res => {
-        window.console.log(res);
-      });
+        .then(res => {
+          window.console.log(res);
+        })
+        .then(res => {
+          window.console.log(res);
+        });
 
       let time = 60;
       // 禁用按钮 开启定时器
@@ -451,9 +462,9 @@ export default {
         if (valid) {
           //前台加密
           this.registerForm.password = this.$md5(this.registerForm.password);
-          
+
           // axios({
-          //   url: "http://183.237.67.218:3002/register",
+          //   url: `${process.env.VUE_APP_BASEURL}/register`,
           //   method: "post",
           //   data: {
           //     avatar: this.registerForm.avatar,
@@ -465,7 +476,7 @@ export default {
           //     rcode: this.registerForm.rcode
           //   }
           // })
-            register({
+          register({
             avatar: this.registerForm.avatar,
             email: this.registerForm.email,
             name: this.registerForm.name,
@@ -473,8 +484,7 @@ export default {
             password: this.$md5(this.registerForm.password),
             phone: this.registerForm.phone,
             rcode: this.registerForm.rcode
-          })
-          .then(res => {
+          }).then(res => {
             //成功回调
             if (res.data.code === 200) {
               // 成功
@@ -497,12 +507,16 @@ export default {
   // 登录页面按下enter键触发登录方法 登录
   created() {
     let that = this;
-    document.onkeydown =function(e){
+    document.onkeydown = function(e) {
       e = window.event || e;
-      if(that.$route.path=='/login'&&(e.code=='Enter'||e.code=='enter')){//验证在登录界面和按得键是回车键enter
-        that.submitForm('loginForm');//登录函数
+      if (
+        that.$route.path == "/login" &&
+        (e.code == "Enter" || e.code == "enter")
+      ) {
+        //验证在登录界面和按得键是回车键enter
+        that.submitForm("loginForm"); //登录函数
       }
-    }
+    };
   }
 };
 </script>

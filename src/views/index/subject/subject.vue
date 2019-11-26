@@ -1,5 +1,5 @@
 <template>
-  <div class="enterprise-container">
+  <div class="subject-container">
     <!-- 头部 -->
     <el-card>
       <!-- 行内 表单 -->
@@ -72,7 +72,7 @@
     </el-card>
 
     <!-- 新增对话框 -->
-    <el-dialog title="新增学科" :visible.sync="addFormVisible">
+    <el-dialog title="新增学科" :visible.sync="addFormVisible" class="add-dialog"> 
       <el-form :model="addForm" ref="addForm" :rules="Rules">
         <el-form-item label="学科编号" prop="rid" :label-width="formLabelWidth">
           <el-input v-model="addForm.rid" autocomplete="off"></el-input>
@@ -97,7 +97,7 @@
     </el-dialog>
 
     <!-- 编辑对话框 -->
-    <el-dialog title="编辑学科" :visible.sync="editFormVisible">
+    <el-dialog title="编辑学科" :visible.sync="editFormVisible" class="add-dialog">
       <el-form :model="editForm" ref="editForm" :rules="Rules">
         <el-form-item label="学科编号" prop="rid" :label-width="formLabelWidth">
           <el-input v-model="editForm.rid" autocomplete="off"></el-input>
@@ -291,7 +291,7 @@ export default {
           if (res.data.code === 200) {
             // 重新获取列表是数据
             this.getList();
-            this.$message.success(res.data.message);
+            // this.$message.success(res.data.message);
           }
         });
     },
@@ -334,7 +334,7 @@ export default {
 </script>
 
 <style lang="less">
-.enterprise-container {
+.subject-container {
   .el-input__inner {
     width: 100px;
   }
@@ -342,6 +342,12 @@ export default {
     .el-input__inner {
       width: 150px;
     }
+  }
+
+  .add-dialog {
+    .el-input__inner {
+    width: 100%;
+  }
   }
 
   // 分页器的样式
