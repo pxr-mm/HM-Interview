@@ -80,7 +80,7 @@
         <el-form-item label="头像" :label-width="formLabelWidth">
           <el-upload
             class="avatar-uploader"
-            :action="action"
+          :action="action"
             name="image"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
@@ -290,7 +290,7 @@ export default {
       // 1.按钮是否可以点击(设置按钮禁用启用)
       isDisabled: false,
       // 文件上传地址
-      action: process.env.VUE_APP_BASEURL + "/uploads"
+      action:`${process.env.VUE_APP_BASEURL}/uploads`,
     };
   },
 
@@ -375,20 +375,24 @@ export default {
     // 注册表单部分
     // 头像上传
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+      this.imageUrl = URL.createObjectURL(file.raw); 
+      // window.console.log(res);
+      // 保存到表单中
+      this.registerForm.avatar = res.data.file_path;
+
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
+      // const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
 
       // if (!isJPG) {
-      //   this.$message.success("上传头像图片只允许传 非JPG 格式!");
+      //   this.$message.success("上传头像图片只允许传 JPG 格式!");
       // }
       if (!isLt2M) {
         this.$message.error("上传头像图片大小不能超过 2MB!");
       }
-      return isJPG && isLt2M;
-      // return isJPG;
+      // return isJPG && isLt2M;
+      return isLt2M;
     },
 
     // 注册图形验证码点击图片刷新(两种方法)
@@ -485,14 +489,17 @@ export default {
             phone: this.registerForm.phone,
             rcode: this.registerForm.rcode
           }).then(res => {
+            window.console.log(res)
             //成功回调
             if (res.data.code === 200) {
               // 成功
               this.$message.success("注册成功啦！");
+              this.showReg=false;
               // window.console.log(this.registerForm.password);
             } else {
               // 失败
               this.$message.warning("注册失败了哦");
+              this.$message.warning(res.data.message);
             }
           });
         } else {
