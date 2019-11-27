@@ -21,7 +21,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="search()">搜索</el-button>
+          <el-button type="primary" @click="search">搜索</el-button>
           <el-button>清除</el-button>
           <el-button type="primary" @click="addFormVisible = true" icon="el-icon-plus">新增企业</el-button>
         </el-form-item>
@@ -245,7 +245,10 @@ export default {
             // 如果成功 提示用户 关闭 对话框
             if (res.data.code == 200) {
               this.addFormVisible = false;
+              // 提示后台传的信息
               // this.$message.success(res.data.message);
+              // 提示自己定义的信息
+              this.$message.success("新增成功");
               // 重新获取一次
               this.getList();
             }
@@ -348,9 +351,7 @@ export default {
         })
     }
   },
-  watch(){
-    this.search();
-  },
+  
 };
 </script>
 

@@ -312,7 +312,7 @@ export default {
 
     // 点击登录
     submitForm(formName) {
-      window.console.log(process.env.VUE_APP_BASEURL);
+      // window.console.log(process.env.VUE_APP_BASEURL);
       // 布尔判断 如果为false
       // 选中协议提示
       if (!this.checked) {
@@ -320,7 +320,7 @@ export default {
         return;
       }
       // this.$refs['ruleForm']==> 获取饿了么的表单
-      // 饿了么的表单.validate()
+      // 饿了么的表单.validate() 表单验证
       this.$refs[formName].validate(valid => {
         if (valid) {
           //验证成功
