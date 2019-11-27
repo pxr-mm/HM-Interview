@@ -34,12 +34,17 @@
         <el-table-column prop="email" label="邮箱"></el-table-column>
         <el-table-column prop="role" label="角色"></el-table-column>
         <el-table-column prop="remark" label="备注"></el-table-column>
-        <el-table-column label="状态" prop="status"></el-table-column>
+        <el-table-column label="状态" prop="status">
+          <template slot-scope="scope">
+            <span type="text" v-if="scope.row.status === 0" style="color:red">禁用</span>
+            <span type="text" v-else>启用</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <!-- 插槽 要想插入自己想要的东西,就使用插槽template-->
-          <template>
+          <template slot-scope="scope">
             <el-button type="text">编辑</el-button>
-            <el-button type="text">禁用</el-button>
+            <el-button type="text" @click="statusChange(scope.row)">{{scope.row.status ===0 ?'启用': '禁用'}}</el-button>
             <el-button type="text">删除</el-button>
           </template>
         </el-table-column>
@@ -251,6 +256,7 @@ export default {
       this.getList();
     },
 
+    // 重置新增表单内容
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
@@ -283,6 +289,16 @@ export default {
           return false;
         }
       });
+    },
+
+    // 禁用启用状态修改 
+    statusChange(data){
+      user.status({id:data.id}).then(res=>{
+        if(res.data.code === 200){
+          this.getList();
+        }
+        
+      })
     }
   }
 };
