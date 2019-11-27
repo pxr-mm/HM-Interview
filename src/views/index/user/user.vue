@@ -44,7 +44,10 @@
           <!-- 插槽 要想插入自己想要的东西,就使用插槽template-->
           <template slot-scope="scope">
             <el-button type="text">编辑</el-button>
-            <el-button type="text" @click="statusChange(scope.row)">{{scope.row.status ===0 ?'启用': '禁用'}}</el-button>
+            <el-button
+              type="text"
+              @click="statusChange(scope.row)"
+            >{{scope.row.status ===0 ?'启用': '禁用'}}</el-button>
             <el-button type="text">删除</el-button>
           </template>
         </el-table-column>
@@ -95,8 +98,46 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitAdd">确 定</el-button>
+        <el-button type="primary" @click="submitAdd('addForm')">确 定</el-button>
         <el-button @click="resetForm('addForm')">重置</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 编辑对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="editFormVisible" class="add-dialog">
+      <el-form :model="editForm" ref="editForm" status-icon :rules="addRules">
+        <el-form-item label="用户名" prop="name" :label-width="formLabelWidth">
+          <el-input v-model="editForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email" :label-width="formLabelWidth">
+          <el-input v-model="editForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" prop="phone" :label-width="formLabelWidth">
+          <el-input v-model="editForm.phone" autocomplete="off"></el-input>
+        </el-form-item>
+        <!-- 下拉框的 角色 -->
+        <el-form-item label="角色" prop="role" class="more-width" :label-width="formLabelWidth">
+          <el-select v-model="editForm.role" placeholder="请选择角色">
+            <el-option label="教师" value="教师"></el-option>
+            <el-option label="学生" value="学生"></el-option>
+            <el-option label="管理员" value="管理员"></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 下拉框的 状态 -->
+        <el-form-item label="状态" prop="status" class="more-width" :label-width="formLabelWidth">
+          <el-select v-model="editForm.status" placeholder="请选择状态">
+            <el-option label="禁用" value="0"></el-option>
+            <el-option label="启用" value="1"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="用户备注" prop="remark" :label-width="formLabelWidth">
+          <el-input v-model="editForm.remark" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitAdd">确 定</el-button>
+        <el-button @click="resetForm('editForm')">重置</el-button>
       </div>
     </el-dialog>
   </div>
@@ -172,6 +213,8 @@ export default {
 
       // 新增数据表单
       addForm: {},
+      // 编辑表单
+      editForm: {},
       formLabelWidth: "80px",
       // 表单验证规则步骤2
       addRules: {
@@ -261,7 +304,7 @@ export default {
       this.$refs[formName].resetFields();
     },
     // 新增用户方法
-    submitAdd() {
+    submitAdd(addForm) {
       // 先进行表单验证
       this.$refs.addForm.validate(valid => {
         if (valid) {
@@ -274,10 +317,8 @@ export default {
               this.addFormVisible = false;
               this.$message.success("新增成功!");
               // 重新获取数据
-              //  this.resetForm();
+              this.$refs[addForm].resetFields();
               this.getList();
-              this.addForm = {};
-             
             } else {
               // 失败
               // this.$message.warning("新增失败");
@@ -291,14 +332,13 @@ export default {
       });
     },
 
-    // 禁用启用状态修改 
-    statusChange(data){
-      user.status({id:data.id}).then(res=>{
-        if(res.data.code === 200){
+    // 禁用启用状态修改
+    statusChange(data) {
+      user.status({ id: data.id }).then(res => {
+        if (res.data.code === 200) {
           this.getList();
         }
-        
-      })
+      });
     }
   }
 };
@@ -306,6 +346,11 @@ export default {
 
 <style lang="less">
 .enterprise-container {
+  // 新增框样式 (如果有很多这样的对话框样式差不多,可以抽取到全局base.css中去)
+  .el-dialog {
+    width: 477px;
+    height: 555px;
+  }
   .el-input__inner {
     width: 100px;
   }
