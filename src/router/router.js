@@ -101,12 +101,12 @@ router.beforeEach((to, from, next) => {
             }
 
             // // 根据用户启用状态, 权限判断
-            // if(to.meta.roles.indexOf(res.data.data.role) == -1) {
-            //     // 不存在  说明 没有权限
-            //     Message.warning('哥们, 你没有权限访问这个页面哦');
-            //     return;
+            if(to.meta.roles.indexOf(res.data.data.role) == -1) {
+                // 不存在  说明 没有权限
+                Message.warning('哥们, 你没有权限访问这个页面哦');
+                return;
 
-            // }
+            }
 
             // 放走
             next();

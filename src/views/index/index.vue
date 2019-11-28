@@ -150,7 +150,7 @@ export default {
    
   },
 
-   // (调整---权限模块 - 用户信息拉取前置, 用计算属性获取)
+   // (调整---权限模块 - 用户信息拉取前置, 用计算属性获取用户信息)
    computed: {
      getName(){
        return this.$store.state.userInfo.name;
