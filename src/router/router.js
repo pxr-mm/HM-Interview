@@ -7,21 +7,21 @@ Vue.use(VueRouter);
 // vue-router更新到3.1版本之后 解决两次访问相同路由地址报错
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err)
+    return originalPush.call(this, location).catch(err => err)
 }
 
 
 // 导入Element-ui的弹框
 import { Message } from "element-ui";
 // 导入 仓库
-import  store  from '../store/store.js';
+import store from '../store/store.js';
 
 // 导入 获取token的方法(调整-路由白名单)
-import { getToken} from '../utils/token.js'
+import { getToken } from '../utils/token.js'
 
 // (调整---权限模块 - 用户信息拉取前置)
 // 导入 用户信息获取
-import {userInfo} from '../api/api.js';
+import { userInfo } from '../api/api.js';
 
 
 // 导入组件
@@ -51,16 +51,20 @@ const routes = [
     { path: "/", redirect: "index" },  //重定向,  默认跳到首页
     {
         path: "/index", component: index,
+        // 路由元信息
+        meta: {
+            roles: ['管理员', '老师', '学生'] //表示index页面这个几个角色可以看的到,下面也一样
+        },
 
-        // 2.2index组件的子路由(嵌套组件的路由)
+        // 2.2 index组件的子路由(嵌套组件的路由)
         children: [
-            { path: "", redirect: "Datashow" },
+            { path: "", redirect: "Datashow" }, //重定向, 一进index页面就去DataShow页面
             // 子路由路径不需要加"/"
-            { path: "enterprise", component: enterprise },
-            { path: "subject", component: subject },
-            { path: "user", component: user },
-            { path: "Datashow", component: Datashow },
-            { path: "itemslist", component: itemslist },
+            { path: "enterprise", component: enterprise, meta: { roles:['管理员', '老师']} },
+            { path: "subject", component: subject, meta: { roles: ['管理员', '老师', '学生'] } },
+            { path: "user", component: user, meta: { roles: ['管理员'] } },
+            { path: "Datashow", component: Datashow, meta: { roles: ['管理员', '老师'] } },
+            { path: "itemslist", component: itemslist, meta: { roles: ['管理员', '老师', '学生'] } },
         ]
     },
 
@@ -73,7 +77,7 @@ const router = new VueRouter({
 
 
 // 导航守卫
-router.beforeEach((to,from, next)=>{
+router.beforeEach((to, from, next) => {
     // 路由白名单
     const whitePaths = ["/login"];
     // 判断是否存在白名单中 to.path 路径 比如: /index  /login
@@ -86,25 +90,34 @@ router.beforeEach((to,from, next)=>{
         // 存在
         // 调用接口验证对错 异步操作
         return userInfo().then(res => {
-          // 用户信息获取成功 token木有问题
-          store.commit("CHANGEINFO", res.data.data);
+            // 用户信息获取成功 token木有问题
+            store.commit("CHANGEINFO", res.data.data);
 
-        //   判断 (用户管理权限)状态 如果用户的状态是禁用的 0 提示  转去登录页面
-        // if(res.data.data.status === 0) {
-        //     // 禁用
-        //     Message.warning("请等待管理员启用");
-        //     return next("/login");
-        // }
-          // 放走
-          next();
+            //   判断 (用户管理权限)状态 如果用户的状态是禁用的 0 提示  转去登录页面
+            if (res.data.data.status === 0) {
+                // 禁用
+                Message.warning("请等待管理员启用!");
+                return next("/login");
+            }
+
+            // // 根据用户启用状态, 权限判断
+            // if(to.meta.roles.indexOf(res.data.data.role) == -1) {
+            //     // 不存在  说明 没有权限
+            //     Message.warning('哥们, 你没有权限访问这个页面哦');
+            //     return;
+
+            // }
+
+            // 放走
+            next();
         });
         // return next();
-      }
+    }
 
     // 说明不是白名单 也没登录 没有token
     Message("请先登录")
     next("/login")
-    
+
 
 })
 

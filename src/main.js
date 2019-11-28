@@ -22,6 +22,10 @@ import './style/base.css'
 // 导入仓库
 import store from './store/store.js'
 
+// 导入 全局过滤器 必须在 new Vue示例之前
+// 只是为了执行，导入即可
+import "./filters/filters.js";
+
 
 new Vue({
   render: h =>h(App),

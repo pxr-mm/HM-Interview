@@ -197,47 +197,49 @@ export const enterprise = {
 };
 
 // 作用域 抽取用户接口
+// subject.add subject.remove
 export const user = {
     // 新增
     add(data) {
-        return axios({
-            url: "/user/add",
-            method: "post",
-            data
-        })
-    },
-    // 状态
-    status(data) {
-        return axios({
-            url: "/user/status",
-            method: "post",
-            data
-        })
+      return axios({
+        url: "/user/add",
+        method: "post",
+        data
+      });
     },
     // 列表
     // get请求的参数用params来传递
     list(params) {
-        return axios({
-            url: "/user/list",
-            method: "get",
-            params
-        });
+      return axios({
+        url: "/user/list",
+        method: "get",
+        params
+      });
+    },
+    // 状态
+    status(data) {
+      return axios({
+        url: "/user/status",
+        method: "post",
+        data
+      });
     },
     // 编辑
     edit(data) {
-        return axios({
-            url: "/user/edit",
-            method: "post",
-            data
-        });
+      return axios({
+        url: "/user/edit",
+        method: "post",
+        data
+      });
     },
     // 删除
     remove(data) {
-        return axios({
-            url: "/user/remove",
-            method: "post",
-            data
-        });
+      return axios({
+        url: "/user/remove",
+        method: "post",
+        data
+      });
     }
-}
+  };
+  
 

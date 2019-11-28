@@ -103,25 +103,9 @@
       </div>
     </el-dialog>
 
-    <!-- 编辑对话框 -->
-    <el-dialog title="编辑用户" :visible.sync="editFormVisible" class="add-dialog">
-      <el-form :model="editForm" ref="editForm" status-icon :rules="addRules">
-
-        <!-- 头像 -->
-        <el-form-item label="头像" :label-width="formLabelWidth">
-          <el-upload
-            class="avatar-uploader"
-            :action="action"
-            name="image"
-            :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
-          >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-        </el-form-item>
-
+    <!-- 编辑框 -->
+    <el-dialog title="编辑用户" :visible.sync="editFormVisible">
+      <el-form :model="editForm" ref="editForm" :rules="addRules">
         <el-form-item label="用户名" prop="name" :label-width="formLabelWidth">
           <el-input v-model="editForm.name" autocomplete="off"></el-input>
         </el-form-item>
@@ -131,40 +115,30 @@
         <el-form-item label="电话" prop="phone" :label-width="formLabelWidth">
           <el-input v-model="editForm.phone" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
-          <el-input v-model="editForm.password" autocomplete="off"></el-input>
-        </el-form-item>
-        <!-- 下拉框的 角色 -->
-        <el-form-item label="角色" prop="role" class="more-width" :label-width="formLabelWidth">
-          <el-select v-model="editForm.role" placeholder="请选择角色">
+        <!-- 下拉框的 所属领域 -->
+        <el-form-item label="角色" class="more-width" :label-width="formLabelWidth" prop="role">
+          <el-select v-model="editForm.role" placeholder="请选择状态">
             <el-option label="老师" value="老师"></el-option>
             <el-option label="学生" value="学生"></el-option>
             <el-option label="管理员" value="管理员"></el-option>
           </el-select>
         </el-form-item>
-        <!-- 下拉框的 状态 -->
-        <el-form-item label="状态" prop="status" class="more-width" :label-width="formLabelWidth">
+        <el-form-item label="状态" class="more-width" :label-width="formLabelWidth" prop="status">
           <el-select v-model="editForm.status" placeholder="请选择状态">
-            <el-option label="禁用" :value="0"></el-option>
-            <el-option label="启用" :value="1"></el-option>
+            <el-option label="启用" value="启用"></el-option>
+            <el-option label="禁用" value="禁用"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="来源" prop="origin" class="more-width" :label-width="formLabelWidth">
-          <el-select v-model="editForm.status" placeholder="请选择状态">
-            <el-option label="前台" value="前台"></el-option>
-            <el-option label="后台" value="后台"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="用户备注" prop="remark" :label-width="formLabelWidth">
+        <el-form-item label="学科备注" :label-width="formLabelWidth" prop="remark">
           <el-input v-model="editForm.remark" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="SubmitEdit">确 定</el-button>
-        <el-button @click="resetForm('editForm')">重置</el-button>
+        <el-button type="primary" @click="submitEdit">确 定</el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
@@ -258,8 +232,6 @@ export default {
         role: [{ required: true, message: "角色不能为空", trigger: "blur" }],
         status: [{ required: true, message: "角色不能为空", trigger: "blur" }]
       },
-
-
       // 头像 
       imageUrl:'',
     };
@@ -385,10 +357,12 @@ export default {
     },
 
     // 编辑提交
-    SubmitEdit() {
+    submitEdit() {
       this.$refs.editForm.validate(valid => {
         if (valid) {
-          // 成功  调用接口
+          this.$delete(this.editForm,'create_time'); //删除后台传的错误参数
+          
+           // 成功  调用接口
           user.edit(this.editForm).then(res => {
             // 成功 : 提示 关闭对话框  重新获取数据
             window.console.log(res);

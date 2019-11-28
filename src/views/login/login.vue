@@ -139,6 +139,71 @@
         <el-button type="primary" @click="registerUser('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
+
+
+
+     <!-- 编辑对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="editFormVisible" class="add-dialog">
+      <el-form :model="editForm" ref="editForm" status-icon :rules="addRules">
+
+        <!-- 头像 -->
+        <el-form-item label="头像" :label-width="formLabelWidth">
+          <el-upload
+            class="avatar-uploader"
+            :action="action"
+            name="image"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
+
+        <el-form-item label="用户名" prop="name" :label-width="formLabelWidth">
+          <el-input v-model="editForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email" :label-width="formLabelWidth">
+          <el-input v-model="editForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" prop="phone" :label-width="formLabelWidth">
+          <el-input v-model="editForm.phone" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
+          <el-input v-model="editForm.password" autocomplete="off"></el-input>
+        </el-form-item>
+        <!-- 下拉框的 角色 -->
+        <el-form-item label="角色" prop="role" class="more-width" :label-width="formLabelWidth">
+          <el-select v-model="editForm.role" placeholder="请选择角色">
+            <el-option label="老师" value="老师"></el-option>
+            <el-option label="学生" value="学生"></el-option>
+            <el-option label="管理员" value="管理员"></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 下拉框的 状态 -->
+        <el-form-item label="状态" prop="status" class="more-width" :label-width="formLabelWidth">
+          <el-select v-model="editForm.status" placeholder="请选择状态">
+            <el-option label="禁用" :value="0"></el-option>
+            <el-option label="启用" :value="1"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="来源" prop="origin" class="more-width" :label-width="formLabelWidth">
+          <el-select v-model="editForm.status" placeholder="请选择状态">
+            <el-option label="前台" value="前台"></el-option>
+            <el-option label="后台" value="后台"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="用户备注" prop="remark" :label-width="formLabelWidth">
+          <el-input v-model="editForm.remark" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="SubmitEdit">确 定</el-button>
+        <el-button @click="resetForm('editForm')">重置</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
