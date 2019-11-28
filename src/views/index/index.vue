@@ -65,7 +65,9 @@
 </template>
 
 <script>
-import {getToken, removeToken} from "../../utils/token.js"
+// 导入获取token的函数  
+// 移除getToken  (调整-路由白名单)
+import {removeToken} from "../../utils/token.js"
 import {userInfo} from "../../api/api.js"
 export default {
   name: "index",
@@ -101,31 +103,34 @@ export default {
 
   // 生命周期钩子
   beforeCreate() {
-    // 判断token是否存在
-    const token = getToken();
-    if(!token) {
-      // 如果token不存在
-      // 提示用户
-      this.$message.error('亲,你木有登录哦,先去登录吧')
-      // 不存在就去跳去登录页
-      this.$router.push("/login");
-    }
+
+    // ------------------- 移除token判断 (调整-路由白名单)
+    // // 判断token是否存在
+    // const token = getToken();
+    // if(!token) {
+    //   // 如果token不存在
+    //   // 提示用户
+    //   this.$message.error('亲,你木有登录哦,先去登录吧')
+    //   // 不存在就去跳去登录页
+    //   this.$router.push("/login");
+    // }
   },
 
   // 创建钩子
   created(){
     userInfo().then( res=>{
-      // 判断token
-      if(res.data.code === 0) {
-        //token有问题  (伪造)
-        this.$message.error("老弟,你牛逼呀,伪造token")
-        // 删除token
-        removeToken();
-        // 去登录页面
-        this.$router.push('/login');
-        return
+      // -------------------------------
+      // // 判断token
+      // if(res.data.code === 0) {
+      //   //token有问题  (伪造)
+      //   this.$message.error("老弟,你牛逼呀,伪造token")
+      //   // 删除token
+      //   removeToken();
+      //   // 去登录页面
+      //   this.$router.push('/login');
+      //   return
         
-      }
+      // }
 
       // window.console.log(res);
       this.avatar =`${process.env.VUE_APP_BASEURL}/${res.data.data.avatar}`

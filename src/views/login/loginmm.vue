@@ -353,12 +353,13 @@ export default {
             if (res.data.code === 200) {
               // 成功
               this.$message.success("主人你可算回来啦");
+              // 注意点: 先保存token  再跳转
+              // window.localStorage.setItem("mmtoken",res.data.data.token)
+              setToken(res.data.data.token);
               // 跳转
               this.$router.push("/index");
 
-              // 保存token
-              // window.localStorage.setItem("mmtoken",res.data.data.token)
-              setToken(res.data.data.token);
+              
 
                // 保存用户信息 到仓库中
               this.$store.commit("CHANGEINFO",res.data.data);

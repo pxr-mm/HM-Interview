@@ -15,6 +15,9 @@ VueRouter.prototype.push = function push(location) {
 import { Message } from "element-ui";
 
 
+// 导入 获取token的方法(调整-路由白名单)
+import { getToken} from '../utils/token.js'
+
 // 导入组件
 // 登录页面组件
 import login from '../views/login/loginmm.vue'
@@ -67,14 +70,22 @@ router.beforeEach((to,from, next)=>{
     // 路由白名单
     const whitePaths = ["/login"];
     // 判断是否存在白名单中 to.path 路径 比如: /index  /login
-    if (whitePaths.indexOf(to.path) == -1) {
-        // 不存在于白名单中 就提示用户 跳转去登录页
-        Message.warning("请先登录!!");
-        return next('/login')
+    if (whitePaths.indexOf(to.path) != -1) {
+        // 存在白名单 放走 
+        return next()
+    }
+    // 如果是登录状态的  token存在 也放走
+    if(getToken){
+        // token 存在
+        // 放走
+        return next();
     }
 
-    // 到这里说明可以访问
-    next();
+    // 说明不是白名单 也没登录 没有token
+    Message("请先登录")
+    next("/login")
+    
+
 })
 
 // 挂载到vue实例上
