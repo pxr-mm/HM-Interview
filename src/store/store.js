@@ -10,11 +10,11 @@ const store = new Vuex.Store({
     // 数据
     state: {
         // 用户信息
-        userInfo: undefined
+        userInfo: null
     },
     // 修改数据 的方法
     mutations: {
-        // 全部大写
+        // 全部大写(增加修改用户数据)
         CHANGEINFO(state, info) {
             // 直接保存
             state.userInfo = info;

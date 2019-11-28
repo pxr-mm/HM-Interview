@@ -90,8 +90,14 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          // 删除token
             removeToken();
-            this.$router.push("/login")
+            
+            // 删除仓库的数据(用户退出的时候，移除token的同时，移除仓库中的信息)
+            this.$store.commit("CHANGEINFO",null);
+            // 去登录页
+            this.$router.push("/login");
+            
           })
         .catch(() => {
           this.$message({
