@@ -11,6 +11,10 @@ VueRouter.prototype.push = function push(location) {
 }
 
 
+// 导入Element-ui的弹框
+import { Message } from "element-ui";
+
+
 // 导入组件
 // 登录页面组件
 import login from '../views/login/loginmm.vue'
@@ -25,6 +29,7 @@ import subject from '../views/index/subject/subject.vue';
 import user from '../views/index/user/user.vue';
 import Datashow from '../views/index/Datashow/Datashow.vue';
 import itemslist from '../views/index/itemslist/itemslist.vue';
+
 
 
 
@@ -55,6 +60,22 @@ const routes = [
 const router = new VueRouter({
     routes
 });
+
+
+// 导航守卫
+router.beforeEach((to,from, next)=>{
+    // 路由白名单
+    const whitePaths = ["/login"];
+    // 判断是否存在白名单中 to.path 路径 比如: /index  /login
+    if (whitePaths.indexOf(to.path) == -1) {
+        // 不存在于白名单中 就提示用户 跳转去登录页
+        Message.warning("请先登录!!");
+        return next('/login')
+    }
+
+    // 到这里说明可以访问
+    next();
+})
 
 // 挂载到vue实例上
 // 暴露出去

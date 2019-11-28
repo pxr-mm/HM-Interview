@@ -80,7 +80,7 @@
         <el-form-item label="头像" :label-width="formLabelWidth">
           <el-upload
             class="avatar-uploader"
-          :action="action"
+            :action="action"
             name="image"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
@@ -290,7 +290,7 @@ export default {
       // 1.按钮是否可以点击(设置按钮禁用启用)
       isDisabled: false,
       // 文件上传地址
-      action:`${process.env.VUE_APP_BASEURL}/uploads`,
+      action: `${process.env.VUE_APP_BASEURL}/uploads`
     };
   },
 
@@ -300,9 +300,9 @@ export default {
     changeCaptcha() {
       // 方法1.修改值即可,在地址后面添加随机生成的参数
       // 很有可能重复
-      this.captchaSrc = `${
-        process.env.VUE_APP_BASEURL
-      }/captcha?type=login&${Math.random()}`;
+      // this.captchaSrc = `${
+      //   process.env.VUE_APP_BASEURL
+      // }/captcha?type=login&${Math.random()}`;
       // 2. 时间戳  绝对不会重复
       this.captchaSrc = `${
         process.env.VUE_APP_BASEURL
@@ -359,6 +359,9 @@ export default {
               // 保存token
               // window.localStorage.setItem("mmtoken",res.data.data.token)
               setToken(res.data.data.token);
+
+               // 保存用户信息 到仓库中
+              this.$store.commit("CHANGEINFO",res.data.data);
             } else {
               // 失败
               this.$message.warning("账号或密码错误");
@@ -375,11 +378,10 @@ export default {
     // 注册表单部分
     // 头像上传
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw); 
+      this.imageUrl = URL.createObjectURL(file.raw);
       // window.console.log(res);
       // 保存到表单中
       this.registerForm.avatar = res.data.file_path;
-
     },
     beforeAvatarUpload(file) {
       // const isJPG = file.type === "image/jpeg";
@@ -489,12 +491,12 @@ export default {
             phone: this.registerForm.phone,
             rcode: this.registerForm.rcode
           }).then(res => {
-            window.console.log(res)
+            window.console.log(res);
             //成功回调
             if (res.data.code === 200) {
               // 成功
               this.$message.success("注册成功啦！");
-              this.showReg=false;
+              this.showReg = false;
               // window.console.log(this.registerForm.password);
             } else {
               // 失败

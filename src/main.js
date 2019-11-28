@@ -19,9 +19,13 @@ Vue.use(ElementUI);
 // 导入自己的全局样式
 import './style/base.css'
 
+// 导入仓库
+import store from './store/store.js'
+
 
 new Vue({
   render: h =>h(App),
   router,
-  // md5,
+  // 挂载到vue实例 - 仓库
+  store,
 }).$mount('#app')
