@@ -13,10 +13,16 @@ VueRouter.prototype.push = function push(location) {
 
 // 导入Element-ui的弹框
 import { Message } from "element-ui";
-
+// 导入 仓库
+import  store  from '../store/store.js';
 
 // 导入 获取token的方法(调整-路由白名单)
 import { getToken} from '../utils/token.js'
+
+// (调整---权限模块 - 用户信息拉取前置)
+// 导入 用户信息获取
+import {userInfo} from '../api/api.js';
+
 
 // 导入组件
 // 登录页面组件
@@ -32,6 +38,7 @@ import subject from '../views/index/subject/subject.vue';
 import user from '../views/index/user/user.vue';
 import Datashow from '../views/index/Datashow/Datashow.vue';
 import itemslist from '../views/index/itemslist/itemslist.vue';
+
 
 
 
@@ -75,11 +82,24 @@ router.beforeEach((to,from, next)=>{
         return next()
     }
     // 如果是登录状态的  token存在 也放走
-    if(getToken){
-        // token 存在
-        // 放走
-        return next();
-    }
+    if (getToken()) {
+        // 存在
+        // 调用接口验证对错 异步操作
+        return userInfo().then(res => {
+          // 用户信息获取成功 token木有问题
+          store.commit("CHANGEINFO", res.data.data);
+
+        //   判断 (用户管理权限)状态 如果用户的状态是禁用的 0 提示  转去登录页面
+        // if(res.data.data.status === 0) {
+        //     // 禁用
+        //     Message.warning("请等待管理员启用");
+        //     return next("/login");
+        // }
+          // 放走
+          next();
+        });
+        // return next();
+      }
 
     // 说明不是白名单 也没登录 没有token
     Message("请先登录")
