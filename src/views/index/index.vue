@@ -34,23 +34,24 @@
           class="el-menu-vertical-demo"
           router 
         >
-          <el-menu-item index="Datashow">
+        <!-- 作用: 数据预览页面只有老师和管理员能看的见,学生看不见 -->
+          <el-menu-item v-if="['管理员','老师','学生'].indexOf(getRole) != -1" index="Datashow">
             <i class="el-icon-pie-chart"></i>
             <span slot="title">数据概览</span>
           </el-menu-item>
-          <el-menu-item index="user">
+          <el-menu-item v-if="['管理员'].indexOf(getRole) != -1" index="user">
             <i class="el-icon-user"></i>
             <span slot="title">用户列表</span>
           </el-menu-item>
-          <el-menu-item index="itemslist">
+          <el-menu-item v-if="['管理员','老师'].indexOf(getRole) != -1" index="itemslist">
             <i class="el-icon-edit-outline"></i>
             <span slot="title">题库列表</span>
           </el-menu-item>
-          <el-menu-item index="enterprise">
+          <el-menu-item v-if="['管理员','老师'].indexOf(getRole) != -1" index="enterprise">
             <i class="el-icon-office-building"></i>
             <span slot="title">企业列表</span>
           </el-menu-item>
-          <el-menu-item index="subject">
+          <el-menu-item v-if="['管理员','老师','学生'].indexOf(getRole) != -1" index="subject">
             <i class="el-icon-notebook-2"></i>
             <span slot="title">学科列表</span>
           </el-menu-item>
@@ -158,6 +159,10 @@ export default {
     //  获取头像
     getIcon(){
       return process.env.VUE_APP_BASEURL+'/'+this.$store.state.userInfo.avatar 
+    },
+    // 获取当前的用户的角色 
+    getRole() {
+      return this.$store.state.userInfo.role;
     }
    }
 };

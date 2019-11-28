@@ -63,7 +63,7 @@ const routes = [
             { path: "enterprise", component: enterprise, meta: { roles:['管理员', '老师']} },
             { path: "subject", component: subject, meta: { roles: ['管理员', '老师', '学生'] } },
             { path: "user", component: user, meta: { roles: ['管理员'] } },
-            { path: "Datashow", component: Datashow, meta: { roles: ['管理员', '老师'] } },
+            { path: "Datashow", component: Datashow, meta: { roles: ['管理员', '老师','学生'] } },
             { path: "itemslist", component: itemslist, meta: { roles: ['管理员', '老师', '学生'] } },
         ]
     },
@@ -100,7 +100,7 @@ router.beforeEach((to, from, next) => {
                 return next("/login");
             }
 
-            // // 根据用户启用状态, 权限判断
+            // // 根据用户启用角色, 权限判断
             if(to.meta.roles.indexOf(res.data.data.role) == -1) {
                 // 不存在  说明 没有权限
                 Message.warning('哥们, 你没有权限访问这个页面哦');
