@@ -26,6 +26,10 @@ import store from './store/store.js'
 // 只是为了执行，导入即可
 import "./filters/filters.js";
 
+// 导入自定义指令  必须在new Vue实例之前
+// 知识为了执行而已(作用:  权限管理-按钮级别限制,哪里需要用到那个指令的限制,就添加在directive.js定义的自定义指令"v-指令")
+import "./directive/directive.js";
+
 
 new Vue({
   render: h =>h(App),

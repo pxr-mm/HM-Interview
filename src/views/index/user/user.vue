@@ -48,7 +48,7 @@
               type="text"
               @click="statusChange(scope.row)"
             >{{scope.row.status ===0 ?'启用': '禁用'}}</el-button>
-            <el-button type="text">删除</el-button>
+            <el-button type="text" v-power="['管理员']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -145,6 +145,7 @@
 <script>
 // 导入api抽取层 接口调用
 import { user } from "../../../api/api";
+
 export default {
   name: "name",
   data() {
